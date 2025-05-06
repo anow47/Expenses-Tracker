@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body{
+  background: hsl(27, 66%, 92%);
+  padding: 3rem 10rem;
+}
+/* Medium screens */
+@media (max-width: 640px) {
+  body {
+    padding: 3rem 2rem;
+  }
+}
+
+@media (max-width: 991px) {
+  body {
+    padding: 3rem 4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body {
+    padding: 3rem 10rem;
+  }
+}

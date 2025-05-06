@@ -1,26 +1,43 @@
-import Expense from "../models/Expense.js";
+let expenses = [
+  {
+    id: 1,
+    day: "sat",
+    amount: 43.28
+  },
+  {
+    id: 2,
+    day: "mon",
+    amount: 17.45
+  },
+  {
+    id: 3,
+    day: "tue",
+    amount: 34.91
+  },
+  {
+    id: 4,
+    day: "wed",
+    amount: 52.36
+  },
+  {
+    id: 5,
+    day: "thu",
+    amount: 31.07
+  },
+  {
+    id: 6,
+    day: "fri",
+    amount: 23.39
+  },
+  {
+    id: 7,
+    day: "sun",
+    amount: 25.48
+  },
+]
 
-export const createExpense = async (req, res) => {
-  const { title, amount, category, date } = req.body;
-  try {
-    const expense = await Expense.create({
-      user: req.user.id,
-      title,
-      amount,
-      category,
-      date
-    });
-    res.status(201).json(expense);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
 
-export const getExpenses = async (req, res) => {
-  try {
-    const expenses = await Expense.find({ user: req.user.id }).sort({ createdAt: -1 });
-    res.json(expenses);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// Get all Expesnses
+export const getExpenses = (req, res) => {
+  res.json(expenses);
 };

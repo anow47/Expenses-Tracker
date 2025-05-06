@@ -1,34 +1,51 @@
-import User from "../models/User.js";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import User from "../models/User";
 
+// REGISTER USER
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ message: "User already exists" });
+	try {
+		const {
+			firstName,
+			lastName,
+			email,
+			password,
+		} = req.body;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = await User.create({ name, email, password: hashedPassword });
+		const salt = await bcrypt.genSalt();
+		const passwordHash = await bcrypt.hash(password, salt);
 
-    res.status(201).json({ message: "User created!" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+		const newUser = new User({
+			firstName,
+			lastName,
+			email,
+			password: passwordHash,
+		});
+
+		const savedUser = await newUser.save();
+		res.status(201).json(savedUser);
+
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
 };
 
+// LOGGING IN
 export const login = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: "Invalid credentials" });
+	try{
+		const { email, password } = req.body;
+		const user = await User.findOne({ email: email });
+		
+		if (!user) return res.status(400).json({ msg: "User does not exist. " });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
+		const isMatch = await bcrypt.compare(password, user.password);
+		if (!isMatch) return res.status(400).json({ msg: "Invalid credentials. " });
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "1d" });
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
+		const token = jwt.sign({ id: User._id }, process.env.JWT_SECRET);
+		delete user.password;
+		res.status(200).json({ token, user });
+
+	} catch(err) {
+		res.status(500).json({ error: err.message });
+	}
+}

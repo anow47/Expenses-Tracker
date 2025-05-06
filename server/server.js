@@ -2,9 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-
-import authRoutes from './routes/authRoutes.js';
-import expenseRoutes from './routes/expenseRoutes.js';
+import { getExpenses } from "./controllers/expenseController.js";
 
 dotenv.config();
 const app = express();
@@ -14,8 +12,9 @@ app.use(cors());
 app.use(express.json());
 
 //Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/expenses', expenseRoutes);
+
+//Get all Expenses
+app.get('/api/expenses', getExpenses);
 
 // Connect DB and start server
 const PORT = process.env.PORT || 7000;
