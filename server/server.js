@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import { getExpenses } from "./controllers/expenseController.js";
+import Expenses from "./models/Expenses.js";
 
 dotenv.config();
 const app = express();
@@ -11,7 +12,19 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-//Routes
+// POST route to receive numbers
+app.post("/api/amount", async (req, res) => {
+  const { amount } = req.body;
+
+  try {
+    const newAmount = new Expenses({ amount });
+    await newAmount.save();
+    res.status(201).json({ message: "Amount saved successfully", data: newAmount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
 
 //Get all Expenses
 app.get('/api/expenses', getExpenses);
